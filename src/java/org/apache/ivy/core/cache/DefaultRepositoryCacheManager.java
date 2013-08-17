@@ -587,6 +587,13 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             IvyPatternHelper.substitute(
                 getDataFilePattern(), mRevId)), "ivy cached data file for " + mRevId);
     }
+    
+    /** A resolver-specific file, only used for caching dynamic revisions, e.g. integration-repo.*/
+    private PropertiesFile getCachedDataFile(String resolverName, ModuleRevisionId mRevId) {
+        return new PropertiesFile(new File(getRepositoryCacheRoot(), 
+            resolverName + "-" + IvyPatternHelper.substitute(
+                getDataFilePattern(), mRevId)), "ivy cached data file for " + mRevId);
+    }
 
     public ResolvedModuleRevision findModuleInCache(
             DependencyDescriptor dd, ModuleRevisionId requestedRevisionId, 
@@ -614,7 +621,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         
         try {
             if (settings.getVersionMatcher().isDynamic(mrid)) {
-                String resolvedRevision = getResolvedRevision(mrid, options);
+                String resolvedRevision = getResolvedRevision(expectedResolver, mrid, options);
                 if (resolvedRevision != null) {
                     Message.verbose("found resolved revision in cache: " 
                         + mrid + " => " + resolvedRevision);
@@ -737,7 +744,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     
-    private String getResolvedRevision(ModuleRevisionId mrid, CacheMetadataOptions options) {
+    private String getResolvedRevision(String expectedResolver, ModuleRevisionId mrid, CacheMetadataOptions options) {
         if (!lockMetadataArtifact(mrid)) {
             Message.error("impossible to acquire lock for " + mrid);
             return null;
@@ -748,7 +755,13 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 Message.verbose("refresh mode: no check for cached resolved revision for " + mrid);
                 return null;
             }
-            PropertiesFile cachedResolvedRevision = getCachedDataFile(mrid);
+            // If a resolver is asking for its specific dynamic revision, avoid looking at a different one
+            PropertiesFile cachedResolvedRevision;
+            // if (expectedResolver == null) {
+                cachedResolvedRevision = getCachedDataFile(mrid);
+            // } else {
+            //     cachedResolvedRevision = getCachedDataFile(expectedResolver, mrid);
+            // }
             resolvedRevision = cachedResolvedRevision.getProperty("resolved.revision");
             if (resolvedRevision == null) {
                 Message.verbose(getName() + ": no cached resolved revision for " + mrid);
@@ -783,6 +796,22 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         }
         try {
             PropertiesFile cachedResolvedRevision = getCachedDataFile(mrid);
+            cachedResolvedRevision.setProperty(
+                "resolved.time", String.valueOf(System.currentTimeMillis()));
+            cachedResolvedRevision.setProperty("resolved.revision", revision);
+            cachedResolvedRevision.save();
+        } finally {
+            unlockMetadataArtifact(mrid);
+        }
+    }
+
+    public void saveResolvedRevision(String resolverName, ModuleRevisionId mrid, String revision) {
+        if (!lockMetadataArtifact(mrid)) {
+            Message.error("impossible to acquire lock for " + mrid);
+            return;
+        }
+        try {
+            PropertiesFile cachedResolvedRevision = getCachedDataFile(resolverName, mrid);
             cachedResolvedRevision.setProperty(
                 "resolved.time", String.valueOf(System.currentTimeMillis()));
             cachedResolvedRevision.setProperty("resolved.revision", revision);

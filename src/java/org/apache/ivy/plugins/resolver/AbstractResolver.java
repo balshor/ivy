@@ -525,6 +525,9 @@ public abstract class AbstractResolver
         Checks.checkNotNull(dd, "dd");
         Checks.checkNotNull(data, "data");
         
+        // always do this, even if we're older, so we won't have to re-scan next time
+        saveModuleRevisionForResolverIfNeeded(dd, newModuleFound);
+
         // check if latest is asked and compare to return the most recent
         ResolvedModuleRevision previousModuleFound = data.getCurrentResolvedModuleRevision();
         String newModuleDesc = describe(newModuleFound);
@@ -554,6 +557,15 @@ public abstract class AbstractResolver
                 && getSettings().getVersionMatcher().isDynamic(dd.getDependencyRevisionId())) {
             getRepositoryCacheManager().saveResolvedRevision(
                 dd.getDependencyRevisionId(), newModuleFound.getId().getRevision());
+        }
+    }
+    
+    protected void saveModuleRevisionForResolverIfNeeded(DependencyDescriptor dd,
+            ResolvedModuleRevision newModuleFound) {
+        if (newModuleFound != null 
+                && getSettings().getVersionMatcher().isDynamic(dd.getDependencyRevisionId())) {
+            getRepositoryCacheManager().saveResolvedRevision(
+                getName(), dd.getDependencyRevisionId(), newModuleFound.getId().getRevision());
         }
     }
 
