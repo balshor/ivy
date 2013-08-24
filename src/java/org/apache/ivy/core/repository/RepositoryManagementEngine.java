@@ -253,7 +253,7 @@ public class RepositoryManagementEngine {
                 for (Iterator iterator = revs.iterator(); iterator.hasNext();) {
                     ModuleDescriptor md = (ModuleDescriptor) iterator.next();
                     if (vmatcher.needModuleDescriptor(
-                            askedMrid, md.getResolvedModuleRevisionId())) {
+                            null, askedMrid, md.getResolvedModuleRevisionId())) {
                         if (vmatcher.accept(askedMrid, md)) {
                             mrid = md.getResolvedModuleRevisionId();
                             break;
