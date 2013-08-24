@@ -72,7 +72,7 @@ import org.apache.ivy.util.Message;
  * This abstract resolver only provides handling for resolver name
  */
 public abstract class AbstractResolver 
-        implements DependencyResolver, HasLatestStrategy, Validatable {
+        implements DependencyResolver, HasLatestStrategy, Validatable, HasPatternInformation {
 
     /**
      * True if parsed ivy files should be validated against xsd, false if they should not, null if
@@ -617,4 +617,10 @@ public abstract class AbstractResolver
         }
         
     }
+
+    /** Default implementation that assumes we haven't pre-filtered on branch. */
+    public boolean hasModuleBeenFilteredForBranch() {
+        return false;
+    }
+
 }
