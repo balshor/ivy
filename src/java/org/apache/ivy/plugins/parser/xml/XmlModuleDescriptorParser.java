@@ -724,9 +724,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 addError("unknown matcher: " + matcherName);
                 return;
             }
-            getMd().addDependencyDescriptorMediator(
-                new ModuleId(org, mod), matcher, 
-                new OverrideDependencyDescriptorMediator(branch, rev));
+            // getMd().addDependencyDescriptorMediator(
+            //    new ModuleId(org, mod), matcher, 
+            //    new OverrideDependencyDescriptorMediator(branch, rev));
         }
 
         protected void includeConfStarted(Attributes attributes) 
