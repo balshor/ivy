@@ -106,7 +106,6 @@ public class RetrieveEngine {
         }
 
         try {
-            Map/*<File, File>*/ destToSrcMap = null;
             // Map<ArtifactDownloadReport, Set<String>>
             Map artifactsToCopy = determineArtifactsToCopy(mrid, destFilePattern, options);
             File fileRetrieveRoot = settings.resolveFile(
@@ -119,12 +118,6 @@ public class RetrieveEngine {
             // then end of retrieve (useful
             // for sync)
             Collection targetIvysStructure = new HashSet(); // same for ivy files
-
-            if (options.isMakeSymlinksInMass()) {
-                // The HashMap is of "destToSrc" because src could go two places, but dest can only
-                // come from one
-                destToSrcMap = new HashMap();
-            }
 
             // do retrieve
             long totalCopiedSize = 0;
@@ -153,11 +146,7 @@ public class RetrieveEngine {
                                         artifact, destFile));
                             }
                         }
-                        if (options.isMakeSymlinksInMass()) {
-                            if (FileUtil.prepareCopy(archive, destFile, true)) {
-                                destToSrcMap.put(destFile, archive);
-                            }
-                        } else if (options.isMakeSymlinks()) {
+                        if (options.isMakeSymlinks()) {
                             FileUtil.symlink(archive, destFile, null, true);
                         } else {
                             FileUtil.copy(archive, destFile, null, true);
@@ -189,11 +178,6 @@ public class RetrieveEngine {
                         }
                     }
                 }
-            }
-
-            if (options.isMakeSymlinksInMass()) {
-                Message.verbose("\tMass symlinking " + destToSrcMap.size() + " files");
-                FileUtil.symlinkInMass(destToSrcMap, true);
             }
 
             if (options.isSync()) {
