@@ -105,6 +105,9 @@ public class PomModuleDescriptorBuilder {
         new Configuration("javadoc", Visibility.PUBLIC,
             "this configuration contains the javadoc artifact of this module, if any.",
             new String[0], true, null),
+        new Configuration("shaded", Visibility.PUBLIC,
+            "this configuration contains the shaded artifact of this module, if any.",
+            new String[0], true, null),
         new Configuration("optional", Visibility.PUBLIC, 
                 "contains all optional dependencies", new String[0], true, null)
                 };
@@ -653,6 +656,12 @@ public class PomModuleDescriptorBuilder {
             null, Collections.singletonMap("m:classifier", "javadoc"));
     }
 
+    public Artifact getShadedArtifact() {
+        return new MDArtifact(
+            ivyModuleDescriptor, mrid.getName(), "shaded", "jar",
+            null, Collections.singletonMap("m:classifier", "shaded"));
+    }
+
     public void addSourceArtifact() {
         ivyModuleDescriptor.addArtifact("sources", getSourceArtifact());
     }
@@ -663,6 +672,10 @@ public class PomModuleDescriptorBuilder {
 
     public void addJavadocArtifact() {
         ivyModuleDescriptor.addArtifact("javadoc", getJavadocArtifact());
+    }
+
+    public void addShadedArtifact() {
+        ivyModuleDescriptor.addArtifact("shaded", getShadedArtifact());
     }
 
     /**
