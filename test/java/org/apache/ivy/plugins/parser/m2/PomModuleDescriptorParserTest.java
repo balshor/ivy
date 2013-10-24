@@ -455,7 +455,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(3, dds.length);
         assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
             dds[0].getDependencyRevisionId());
-        assertEquals(new HashSet(Arrays.asList(new String[] {"optional", "sources"})), new HashSet(Arrays
+        assertEquals(new HashSet(Arrays.asList(new String[] {"optional"})), new HashSet(Arrays
                 .asList(dds[0].getModuleConfigurations())));
         //I don't know what it should be.  Ivy has no notion of optional dependencies
         //assertEquals(new HashSet(Arrays.asList(new String[] {"compile(*)", "runtime(*)",

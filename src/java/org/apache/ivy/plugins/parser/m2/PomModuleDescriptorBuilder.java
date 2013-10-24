@@ -135,8 +135,8 @@ public class PomModuleDescriptorBuilder {
                     //dd.addDependencyConfiguration("compile", "provided(*)");
                     dd.addDependencyConfiguration("compile", "master(*)");
                     dd.addDependencyConfiguration("runtime", "runtime(*)");
+                    dd.addDependencyConfiguration("sources", "sources()");
                 }
-                dd.addDependencyConfiguration("sources", "sources()");
             }
         });
         MAVEN2_CONF_MAPPING.put("provided", new ConfMapper() {
@@ -151,8 +151,8 @@ public class PomModuleDescriptorBuilder {
                     dd.addDependencyConfiguration("provided", "provided(*)");
                     dd.addDependencyConfiguration("provided", "runtime(*)");
                     dd.addDependencyConfiguration("provided", "master(*)");
+                    dd.addDependencyConfiguration("sources", "sources()");
                 }
-                dd.addDependencyConfiguration("sources", "sources()");
             }
         });
         MAVEN2_CONF_MAPPING.put("runtime", new ConfMapper() {
@@ -165,8 +165,8 @@ public class PomModuleDescriptorBuilder {
                     dd.addDependencyConfiguration("runtime", "compile(*)");
                     dd.addDependencyConfiguration("runtime", "runtime(*)");
                     dd.addDependencyConfiguration("runtime", "master(*)");
+                    dd.addDependencyConfiguration("sources", "sources()");
                 }
-                dd.addDependencyConfiguration("sources", "sources()");
             }
         });
         MAVEN2_CONF_MAPPING.put("test", new ConfMapper() {
